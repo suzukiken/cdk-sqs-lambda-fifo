@@ -5,7 +5,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import { SqsEventSource } from "@aws-cdk/aws-lambda-event-sources";
 import { PythonFunction } from "@aws-cdk/aws-lambda-python";
 
-export class CdksqsLambdaFifoStack extends cdk.Stack {
+export class CdksqsLambdaFifoConcStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -44,7 +44,16 @@ export class CdksqsLambdaFifoStack extends cdk.Stack {
       queueName: PREFIX_NAME + ".fifo",
       contentBasedDeduplication: false,
       retentionPeriod: cdk.Duration.minutes(10),
-      visibilityTimeout: cdk.Duration.seconds(15),
+      visibilityTimeout: cdk.Duration.seconds(240),
+      // 15 reject 200
+      // 100 reject 50
+      // 200 reject 11
+      // 250 reject 0
+      // 220 reject 1
+      // 230 reject 10
+      // 240 reject 0
+      // 240 reject 1
+      // 240 reject 10
       deadLetterQueue: {
         maxReceiveCount: 1,
         queue: dead_letter_queue,
@@ -75,7 +84,8 @@ export class CdksqsLambdaFifoStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(12),
       role: role,
       layers: [ layer ], // add Lambda Insight
-      tracing: lambda.Tracing.ACTIVE // activate X-Ray
+      tracing: lambda.Tracing.ACTIVE, // activate X-Ray
+      reservedConcurrentExecutions: 1
     });
     
     lambda_function.addEventSource(
