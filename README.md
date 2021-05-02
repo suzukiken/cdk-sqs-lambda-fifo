@@ -8,5 +8,5 @@ To deploy standard SQS and Lambda which will be triggered by the SQS.
 * `cdk deploy CdksqsLambdaFifoConcStack`
 * `cdk deploy CdksqsLambdaFifoMixedStack`
 
-[description](https://figmentresearch.com/aws/cdksqs-lambda-fifo)
+[description](https://note.figmentresearch.com/aws/cdksqs-lambda-fifo)
 
